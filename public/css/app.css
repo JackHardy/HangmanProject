@@ -1,0 +1,6 @@
+
+.jumbotron-img {
+    background: rgb(0, 238, 255);
+    background: linear-gradient(302deg, rgb(0, 255, 179) 16%, rgba(51,61,81,1) 97%);
+    color: #fff;
+}

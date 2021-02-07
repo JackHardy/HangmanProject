@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}The execution of {{ name }}{% endblock %}
+
+{% block body %}
+{% if win_fail_condition == 2 %}
+<p>you win</p>
+
+{% elseif win_fail_condition == 1 %}
+<p>you lose</p>
+
+{% else %}
+<div class="mt-5 p-3">
+    <h2>Dawn of</h2>
+    <h1>The Final Day</h1>
+    <h3>- 24 Hours Remain -</h3>
+    {% if birthday|date("d/m") == "now"|date("d/m") %}
+    <div>
+        <div>
+            <span style="color:#ff6600">H</span><span style="color:#ffcc00">a</span><span
+                style="color:#ccff00">p</span><span style="color:#66ff00">p</span><span
+                style="color:#00ff00">y</span><span style="color: transparent;text-shadow: none;">&nbsp;</span><span
+                style="color:#00ffcc">B</span><span style="color:#00ccff">i</span><span
+                style="color:#0066ff">r</span><span style="color:#0000ff">t</span><span
+                style="color:#6600ff">h</span><span style="color:#cc00ff">d</span><span
+                style="color:#ff00cc">a</span><span style="color:#ff0066">y</span><span style="color:#ff0000">!</span>
+        </div>
+        <div>
+            <p>Though, what a terrible night to have a curse!</p>
+        </div>
+    </div>
+    {% endif %}
+    <p>You wake up to find youself in a cell, it's dark and damp, but yet you feel a breeze. The fresh air flows from
+        the window from which you hear bells tolling. "Here ye, here ye" shouts the town crier. "Today marks the day of
+        the execution of {{ name }}, accused of treason!". You are cursed to be executed for a crime you did not commit,
+        <i>"There must be a way out!</i> you think to yourself". Across the room you see a lock on the jail door holding
+        you from your freedom, it is made from big, bulky brass and is cold to the touch. Running your fingers across it
+        you feel {{ word|length }} indents... <i>"A code! Thats it!"</i> you think to yourself once again. You look
+        outside once more to see the lazy townsfolk haven't even built the gallows yet. There is still time, you best
+        get to work guessing.
+    </p>
+</div>
+<div>
+    <h1>{{ revealed_word|join(' ') }}</h1>
+</div>
+<div>
+    <form action="{{ path('app_hangman') }}" method="post">
+        {% for letter in 'a'|upper..'z'|upper %}
+        {% if letter|upper in letters_guessed %}
+        <input class="btn btn-dark btn-lg" name="guess" id="guess" type="submit" value="{{ letter }}" disabled>
+        {% else %}
+        <input class="btn btn-dark btn-lg" name="guess" id="guess" type="submit" value="{{ letter }}">
+        {% endif %}
+        {% endfor %}
+        <input type="hidden" name="birthday" value="{{ birthday }}" />
+        <input type="hidden" name="name" value="{{ name }}" />
+        <input type="hidden" name="difficulty" value="{{ difficulty }}" />
+        <input type="hidden" name="guesses" value="{{ guesses }}" />
+        <input type="hidden" name="word" value="{{ word }}" />
+        <input type="hidden" name="word_definition" value="{{ word_definition }}" />
+        <input type="hidden" name="letters_guessed" value="{{ letters_guessed|join(',') }}" />
+        <input type="hidden" name="revealed_word" value="{{ revealed_word|join(',') }}" />
+        <input type="hidden" name="failed_guesses" value="{{ failed_guesses }}" />
+    </form>
+</div>
+<p>Failed guesses: {{ failed_guesses }}/7</p>
+{% endif %}
+{% endblock %}
+
+{% block footeraditionals %}
+<div class="mr-2 pt-2">
+    <img src="{{ asset('images/JackCharGradBlankBG.png') }}" width="100" height="100">
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Jack Hardy{% endblock %}</title>
+    {% block stylesheets %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+        integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    {% endblock %}
+</head>
+
+<body class="text-center">
+    {% block navbar %}
+    <nav class="navbar navbar-dark bg-dark" style="height: 100px;">
+        <a class="navbar-brand" href="{{ path('app_index') }}">
+            <p class="pl-2 d-inline font-weight-bold" style="color: rgb(235, 235, 235);">Home</p>
+        </a>
+    </nav>
+    {% endblock %}
+
+    {% block body %}{% endblock %}
+    <footer class="mt-5 p-3 text-center">
+        <div>Coded by <i style="color: rgb(0, 217, 255);" class="fa fa-code"></i> the developer <a
+                style="color: #444; text-decoration: underline;" href="https://www.linkedin.com/in/jackehardy/">Jack
+                Hardy</a>
+            {% block footeraditionals %}{% endblock%}
+        </div>
+    </footer>
+    {% block javascripts %}{% endblock %}
+</body>
+
+</html>
