@@ -23,12 +23,12 @@ https://symfony.com/doc/4.2/setup.html#installing-symfony
 From here jump on to your local flavour of terminal and nativgate to
 the directory where you placed this repository e.g. C:\Users\...\Documents\HangmanProject, make sure you are at the top level with the src folder etc within, now run the following command...
 
-// This will install any needed packages to run this locally
+<!--This will install any needed packages to run this locally-->
 composer install
 
-then
+<!--then this-->
 
-// This will start the local server
+<!--This will start the local server-->
 symfony server:start
 
 This will start a small local webserver for this project to run on. By default the standard address is https://127.0.0.1:8000, head on over
