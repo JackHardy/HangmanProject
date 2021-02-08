@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Data\TextData;
 use Symfony\Component\HttpClient\HttpClient;
 
 class Game
@@ -14,6 +15,7 @@ class Game
     private $letters_guessed;
     private $revealed_word;
     private $failed_guesses;
+    private $success = false;
     private $fail = false;
     private $win = false;
 
@@ -28,26 +30,21 @@ class Game
         $this->failed_guesses = $failed_guesses;
 
         if ($word == null && $word_definition == null) {
-            $this->initialiseGame();
+            $this->generateWord();
         }
 
         if ($revealed_word == null) {
             $this->revealed_word = $this->blankWord($this->word);
-        }
-        else {
+        } else {
             $this->revealed_word = explode(",", $revealed_word);
         }
     }
 
-    public function initialiseGame()
-    {
-        $this->guesses = 0;
-        $this->failed_guesses = 0;
-        $this->fail = false;
-        $this->win = false;
-        $this->generateWord();
-    }
-
+    /**
+     * User has taken a guess process and increase count
+     *
+     * @param string  $object The object to convert
+     */
     public function guess($guess)
     {
         $this->letters_guessed[] = $guess;
@@ -55,6 +52,9 @@ class Game
         $this->guesses++;
     }
 
+    /**
+     * Parent function to grab words from one API filter them down into difficulty then grab a definition from another API
+     */
     private function generateWord()
     {
 
@@ -65,10 +65,11 @@ class Game
 
         $this->word = strtoupper($final_word["word"]);
         $this->word_definition = $final_word["results"][rand(0, count($final_word["results"]) - 1)]["definition"];
-        dump($final_word);
     }
 
     /**
+     * Grabs an array of random words via an API call
+     * 
      * @return array $initial_words
      */
     private function fetchWords(): array
@@ -86,6 +87,8 @@ class Game
     }
 
     /**
+     * Passed an array of random words and filters them in to groups of particular lengths
+     * 
      * @param array $initial_words
      * 
      * @return array $sorted_words
@@ -117,6 +120,8 @@ class Game
     }
 
     /**
+     * Isolates a specific group of words based on users difficulty choice
+     * 
      * @param array $sorted_words
      * 
      * @return array $words
@@ -129,6 +134,8 @@ class Game
     }
 
     /**
+     * Move through the chosen array until it finds a word with a deffinition according to a different API call
+     * 
      * @param array $words
      * 
      * @return array $word
@@ -169,35 +176,37 @@ class Game
     }
 
     /**
-    * @param string $guess
-    * 
-    */
+     * Check for success or fail based on users guess
+     * 
+     * @param string $guess
+     */
     public function checkReveal($guess)
     {
         if (in_array($guess, str_split($this->word))) {
+            $this->success = true;
             $this->updateRevealedWord($guess);
-        }
-        else {
+        } else {
             $this->failed_guesses++;
         }
-        
+
         $this->checkWinFailCondition();
     }
 
     /**
-    * @param string $guess
-    * 
-    */
+     * Takes recent guess and applies it to the blanked out word to reveal that particular character
+     * 
+     * @param string $guess
+     * 
+     */
     public function updateRevealedWord($guess)
     {
         $character_array = str_split($this->word);
         $new_revealed_word = array();
 
         foreach ($character_array as $key => $value) {
-            if($guess == $value || $this->revealed_word[$key] == $value) {
+            if ($guess == $value || $this->revealed_word[$key] == $value) {
                 $new_revealed_word[] = $value;
-            }
-            else {
+            } else {
                 $new_revealed_word[] = "_";
             }
         }
@@ -206,21 +215,26 @@ class Game
     }
 
     /**
-    * @param string $word
-    * 
-    * @return array $blank_word
-    */
+     * Initialises a blank word based on the length of the chosen word
+     * 
+     * @param string $word
+     * 
+     * @return array $blank_word
+     */
     private function blankWord(string $word)
     {
         $blank_word = array();
 
-        for ($i=0; $i < strlen($word); $i++) { 
+        for ($i = 0; $i < strlen($word); $i++) {
             $blank_word[] = "_";
         }
 
         return $blank_word;
     }
 
+    /**
+     * Checks for win condition and switches particular boolean on condition
+     */
     private function checkWinFailCondition()
     {
         if ($this->failed_guesses >= 7) {
@@ -231,9 +245,8 @@ class Game
 
         if (strpos($string_revealed_word, "_") === false) {
             $this->win = true;
-            dump($string_revealed_word);
         }
-    }   
+    }
 
     /**
      * @return string
@@ -284,34 +297,58 @@ class Game
     }
 
     /**
-    * @return array
-    */
+     * @return array
+     */
     public function getRevealedWord()
     {
         return $this->revealed_word;
     }
 
     /**
-    * @return int
-    */
+     * @return int
+     */
     public function getFailedGuesses()
     {
         return $this->failed_guesses;
     }
 
     /**
-    * @return int
-    */
+     * @return int
+     */
     public function getWinFailCondition()
     {
         if ($this->win == true) {
             return 2;
-        }
-        else if ($this->fail == true) {
+        } else if ($this->fail == true) {
             return 1;
-        }
-        else {
+        } else {
             return 0;
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrentText()
+    {
+        $game = new TextData($this->name, $this->word, $this->failed_guesses);
+
+        if ($this->win == true) {
+            return $game->getTextData("win");
+        } elseif ($this->fail == true) {
+            return $game->getTextData("fail");
+        }
+        if ($this->failed_guesses < 7) {
+            if ($this->guesses == 0) {
+                return $game->getTextData("intro");
+            } elseif ($this->success == true) {
+                $random_number = rand(1, 5);
+                return $game->getTextData("success_" . $random_number);
+            } else {
+                return $game->getTextData("fail_guess_" . $this->failed_guesses);
+            }
+        } else {
+            return "";
         }
     }
 }

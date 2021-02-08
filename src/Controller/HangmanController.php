@@ -14,10 +14,10 @@ class HangmanController extends AbstractController
      */
     public function indexAction()
     {
-        $_SERVER['HTTP_REFERER'] == "https://127.0.0.1:8000/hangman" ? $chicken = true : $chicken = false;
+        $_SERVER['HTTP_REFERER'] == "https://127.0.0.1:8000/hangman" ? $return = true : $return = false;
 
         return $this->render('hangman/index.html.twig', [
-            'chicken' => $chicken
+            'return' => $return
         ]);
     }
 
@@ -28,12 +28,12 @@ class HangmanController extends AbstractController
     {
         $name = isset($_POST['name']) ? $_POST['name'] : 'John Doe';
         $difficulty = isset($_POST['difficulty']) ? $_POST['difficulty'] : 1;
-        $guesses = isset($_POST['guesses']) ? $_POST['guesses'] : null;
+        $guesses = isset($_POST['guesses']) ? $_POST['guesses'] : 0;
         $word = isset($_POST['word']) ? $_POST['word'] : null;
         $word_definition = isset($_POST['word_definition']) ? $_POST['word_definition'] : null;
         $letters_guessed = isset($_POST['letters_guessed']) ? $_POST['letters_guessed'] : null;
         $revealed_word = isset($_POST['revealed_word']) ? $_POST['revealed_word'] : null;
-        $failed_guesses = isset($_POST['failed_guesses']) ? $_POST['failed_guesses'] : null;
+        $failed_guesses = isset($_POST['failed_guesses']) ? $_POST['failed_guesses'] : 0;
         $game = new Game($name, $difficulty, $guesses, $word, $word_definition, $letters_guessed, $revealed_word, $failed_guesses);
 
         if (isset($_POST['guess'])) {
@@ -41,7 +41,7 @@ class HangmanController extends AbstractController
         }
 
         $birthday = isset($_POST['birthday']) ? $_POST['birthday'] : null;
-dump($game->getWinFailCondition());
+
         return $this->render('hangman/game.html.twig', [
             'birthday' => $birthday,
             'name' => $game->getName(),
@@ -52,7 +52,8 @@ dump($game->getWinFailCondition());
             'letters_guessed' => $game->getLettersGuessed(),
             'revealed_word' => $game->getRevealedWord(),
             'failed_guesses' => $game->getfailedGuesses(),
-            'win_fail_condition' => $game->getWinFailCondition()
+            'win_fail_condition' => $game->getWinFailCondition(),
+            'current_text' => $game->getCurrentText()
         ]);
     }
 }

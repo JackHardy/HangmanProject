@@ -4,19 +4,71 @@
 
 {% block body %}
 {% if win_fail_condition == 2 %}
-<p>you win</p>
+<div class="mt-3">
+    <i class="fas fa-running fa-10x" style="color:#00ccff"></i>
+    <div class="mb-5">
+        <h1>You Escaped</h1>
+    </div>
+    <div class="container" style="height: 150px;">
+        {{ current_text|raw }}
+    </div>
+    <div class="mb-5">
+        <h2>{{ word }}:</h2>
+        <h3><i>"{{ word_definition }}"</i></h3>
+    </div>
+    <div>
+        <form action="{{ path('app_hangman') }}" method="post">
+            <button class="btn btn-lg btn-primary" type="submit">
+                Play again?
+            </button>
+            <input type="hidden" name="birthday" value="{{ birthday }}" />
+            <input type="hidden" name="name" value="{{ name }}" />
+            <input type="hidden" name="difficulty" value="{{ difficulty }}" />
+        </form>
+    </div>
+    <p style="color:rgb(94, 116, 131);font-size:10px;">Want to change difficulty? Just head back to the home page</p>
+</div>
 
 {% elseif win_fail_condition == 1 %}
-<p>you lose</p>
+<div class="mt-3">
+    <i class="fas fa-skull-crossbones fa-10x" style="color:#444"></i>
+    <div class="mb-5">
+        <h1>You have run out of time</h1>
+    </div>
+    <div>
+        <div class="container" style="height: 150px;">
+            {{ current_text|raw }}
+        </div>
+        <h4>Game Over</h4>
+    </div>
+    <div class="mb-5">
+        <h2>{{ word }}:</h2>
+        <h3><i>"{{ word_definition }}"</i></h3>
+    </div>
+    <div>
+        <form action="{{ path('app_hangman') }}" method="post">
+            <button class="btn btn-lg btn-primary" type="submit">
+                Try again?
+            </button>
+            <input type="hidden" name="birthday" value="{{ birthday }}" />
+            <input type="hidden" name="name" value="{{ name }}" />
+            <input type="hidden" name="difficulty" value="{{ difficulty }}" />
+        </form>
+    </div>
+    <p style="color:rgb(94, 116, 131);font-size:10px;">Want to change difficulty? Just head back to the home page</p>
+</div>
 
 {% else %}
-<div class="mt-5 p-3">
-    <h2>Dawn of</h2>
-    <h1>The Final Day</h1>
-    <h3>- 24 Hours Remain -</h3>
+<div class="mt-3">
+    <div class="mb-4">
+        <h2>Dawn of</h2>
+        <h1>The Final Day</h1>
+        <h3>- 24 Hours Remain -</h3>
+    </div>
     {% if birthday|date("d/m") == "now"|date("d/m") %}
-    <div>
-        <div>
+    <div class="mb-3">
+        <i class="mb-2 fas fa-birthday-cake fa-3x" style="color:#00ccff"></i>
+        <div style="font-size:24px; font-weight:bold;">
             <span style="color:#ff6600">H</span><span style="color:#ffcc00">a</span><span
                 style="color:#ccff00">p</span><span style="color:#66ff00">p</span><span
                 style="color:#00ff00">y</span><span style="color: transparent;text-shadow: none;">&nbsp;</span><span
@@ -26,30 +78,28 @@
                 style="color:#ff00cc">a</span><span style="color:#ff0066">y</span><span style="color:#ff0000">!</span>
         </div>
         <div>
-            <p>Though, what a terrible night to have a curse!</p>
+            {% set difference = date("now"|date("d/m/Y")).diff(date(birthday|date("d/m/Y"))) %}
+            {% set years = difference.y %}
+            <p>Though, what a terrible night to have a curse! {{ years }} years for it all to come to this...</p>
         </div>
     </div>
     {% endif %}
-    <p>You wake up to find youself in a cell, it's dark and damp, but yet you feel a breeze. The fresh air flows from
-        the window from which you hear bells tolling. "Here ye, here ye" shouts the town crier. "Today marks the day of
-        the execution of {{ name }}, accused of treason!". You are cursed to be executed for a crime you did not commit,
-        <i>"There must be a way out!</i> you think to yourself". Across the room you see a lock on the jail door holding
-        you from your freedom, it is made from big, bulky brass and is cold to the touch. Running your fingers across it
-        you feel {{ word|length }} indents... <i>"A code! Thats it!"</i> you think to yourself once again. You look
-        outside once more to see the lazy townsfolk haven't even built the gallows yet. There is still time, you best
-        get to work guessing.
-    </p>
+    <div class="container mb-5" style="height: 150px;">
+        {{ current_text|raw }}
+    </div>
 </div>
-<div>
+<div class="mb-5">
     <h1>{{ revealed_word|join(' ') }}</h1>
 </div>
-<div>
+<div class="mb-3">
     <form action="{{ path('app_hangman') }}" method="post">
         {% for letter in 'a'|upper..'z'|upper %}
         {% if letter|upper in letters_guessed %}
-        <input class="btn btn-dark btn-lg" name="guess" id="guess" type="submit" value="{{ letter }}" disabled>
+        <input class="btn btn-dark btn-lg text-center mb-2" style="width: 50px;" name="guess" id="guess" type="submit"
+            value="{{ letter }}" disabled>
         {% else %}
-        <input class="btn btn-dark btn-lg" name="guess" id="guess" type="submit" value="{{ letter }}">
+        <input class="btn btn-dark btn-lg text-center mb-2" style="width: 50px;" name="guess" id="guess" type="submit"
+            value="{{ letter }}">
         {% endif %}
         {% endfor %}
         <input type="hidden" name="birthday" value="{{ birthday }}" />
@@ -63,7 +113,17 @@
         <input type="hidden" name="failed_guesses" value="{{ failed_guesses }}" />
     </form>
 </div>
-<p>Failed guesses: {{ failed_guesses }}/7</p>
+<div class="mb-4">
+    <h4>Failed guesses: {{ failed_guesses }}/7</h4>
+</div>
+<div class="mb-3">
+    <button class="btn btn-lg btn-primary" data-toggle="collapse" data-target="#hint">Hint?</button>
+
+    <div id="hint" class="collapse">
+        In panic you look around, only to find a small carving on the wall near the lock. It reads...</br><b>"{{
+            word_definition }}"</b></br>how very odd.
+    </div>
+</div>
 {% endif %}
 {% endblock %}
 

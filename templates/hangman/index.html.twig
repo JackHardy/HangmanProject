@@ -12,8 +12,8 @@
 <div class="mt-5 p-3" style="margin: auto; width: 50%;">
     <form action="{{ path('app_hangman') }}" class="form-details" method="post">
         <h1 class="h3 mb-3 font-weight-normal">
-            {% if chicken == true %}
-            Too scared? Don't worry you can always try again
+            {% if return == true %}
+            Too hard? or maybe too easy, regardless, don't worry you can always try again
             {% else %}
             Wanna play a game?
             {% endif %}
@@ -22,7 +22,7 @@
         <input type="text" name="name" id="inputName" class="h3 mb-3 form-control" placeholder="Name"
             pattern="[a-zA-Z\s]+" required autofocus>
         <label for="birthday">Birthday</label>
-        <input type="date" name="birthday" id="inputBirthday" class="h3 mb-3 form-control">
+        <input type="date" name="birthday" id="inputBirthday" class="h3 mb-3 form-control" required autofocus>
         <p>Difficulty:</p>
         <input type="radio" name="difficulty" id="easy" value="0" class="h3 mb-3">
         <label for="easy">Easy</label><br>
