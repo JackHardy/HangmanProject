@@ -14,7 +14,11 @@ class HangmanController extends AbstractController
      */
     public function indexAction()
     {
-        $_SERVER['HTTP_REFERER'] == "https://127.0.0.1:8000/hangman" ? $return = true : $return = false;
+        $return = false;
+
+        if (isset($_SERVER['HTTP_REFERER'])) {
+            $_SERVER['HTTP_REFERER'] == "https://127.0.0.1:8000/hangman" ? $return = true : $return = false;
+        }
 
         return $this->render('hangman/index.html.twig', [
             'return' => $return
