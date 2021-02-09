@@ -38,7 +38,7 @@ composer install
 <!--This will start the local server-->
 symfony server:start
 
-This will start a small local webserver for this project to run on. By default the standard address is https://127.0.0.1:8000, head on over
+This will start a small local webserver for this project to run on. By default the standard address is http://127.0.0.1:8000, head on over
 to this page and you should be greated with my project home page. Enter your name, DOB and pick a difficulty. Good luck! Please note no 
 information is stored this is simply a small coding example.
 
